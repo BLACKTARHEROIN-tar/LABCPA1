@@ -710,6 +710,47 @@ int ad5593r_curve_example(struct no_os_uart_desc *uart_desc)
 	return curve_trace_common(uart_desc, &cfg);
 }
 
+/**
+ * @brief Print ASCII art credits banner over UART.
+ * @param uart_desc - UART descriptor for output.
+ */
+static void print_ascii_banner(struct no_os_uart_desc *uart_desc)
+{
+	const char *art[] = {
+		"\n\r",
+		" _____  _   _     _     _   _  _  __  __   __  ___   _   _ \n\r",
+		"|_   _|| | | |   / \\   | \\ | || |/ /  \\ \\ / // _ \\ | | | |\n\r",
+		"  | |  | |_| |  / _ \\  |  \\| || .  /    \\ V /| | | || | | |\n\r",
+		"  | |  |  _  | / ___ \\ | |\\  || |\\ \\    | | | |_| || |_| |\n\r",
+		"  |_|  |_| |_|/_/   \\_\\|_| \\_||_| \\_\\   |_|  \\___/  \\___/ \n\r",
+		"\n\r",
+		"  ================================================\n\r",
+		"\n\r",
+		"    _    ____  ____  ____  \n\r",
+		"   / \\  |  _ \\|  _ \\/ ___| \n\r",
+		"  / _ \\ | |_) | |_) \\___ \\ \n\r",
+		" / ___ \\|  __/|  __/ ___) |\n\r",
+		"/_/   \\_\\_|   |_|   |____/ \n\r",
+		"\n\r",
+		"    _    ____ ___ \n\r",
+		"   / \\  |  _ \\_ _|\n\r",
+		"  / _ \\ | | | | | \n\r",
+		" / ___ \\| |_| | | \n\r",
+		"/_/   \\_\\____/___|\n\r",
+		"\n\r",
+		" ____  ____  ____  \n\r",
+		"/ ___||  _ \\|  _ \\ \n\r",
+		"\\___ \\| | | | |_) |\n\r",
+		" ___) | |_| |  __/ \n\r",
+		"|____/|____/|_|    \n\r",
+		"\n\r",
+	};
+
+	for (int i = 0; i < (int)(sizeof(art) / sizeof(art[0])); i++)
+		no_os_uart_write(uart_desc, (const uint8_t *)art[i],
+				 strlen(art[i]));
+}
+
 int lm75_example(struct no_os_uart_desc *uart_desc)
 {
 	struct lm75_dev *lm75 = NULL;
@@ -803,13 +844,16 @@ int curvetrace_example(void)
 	/* Add delay between tests */
 	no_os_mdelay(2000);
 
-	/* Run AD5593R curve tracer (I2C) */
+	/* Run LM75 temperature sensor */
 	ret = lm75_example(uart_desc);
 	if (ret) {
 		char msg_err[] = "\n\rLM75 failed!\n\r";
 		no_os_uart_write(uart_desc, msg_err, sizeof(msg_err) - 1);
 		goto cleanup;
 	}
+
+	/* Print ASCII art credits banner */
+	print_ascii_banner(uart_desc);
 
 cleanup:
 	if (uart_desc)
